@@ -1,5 +1,6 @@
-require 'amazon_s3'
-require_dependency 'amazon_s3_hooks'
+require 'redmine'
+require_relative 'lib/amazon_s3'
+require_relative 'lib/amazon_s3_hooks'
 
 Redmine::Plugin.register :amazon_s3 do
   name 'AmazonS3'
@@ -8,3 +9,4 @@ Redmine::Plugin.register :amazon_s3 do
   url 'https://github.com/jhovad/redmine4_amazon_s3'
   author 'Josef Hovad'
 end
+

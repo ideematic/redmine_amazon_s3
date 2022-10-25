@@ -8,7 +8,7 @@ Attachment.class_eval do
   def put_to_s3
     if @temp_file && (@temp_file.size > 0) && errors.blank?
       self.disk_directory = disk_directory || target_directory
-      self.disk_filename  = Attachment.disk_filename(filename, disk_directory) if disk_filename.blank?
+      self.disk_filename  = Attachment.disk_filename(filename, disk_directory) if self.disk_filename.blank?
       logger.debug("Uploading to #{disk_filename}")
       AmazonS3::Connection.put(disk_filename_s3, filename, @temp_file, self.content_type)
       self.digest = Time.now.to_i.to_s
@@ -50,13 +50,30 @@ Attachment.class_eval do
   end
 
   def disk_filename_s3
-    path = disk_filename
+    path = self.disk_filename
     path = File.join(disk_directory, path) unless disk_directory.blank?
     path
   end
 
   def generate_thumbnail_s3
     thumbnail_s3(update_thumb: true)
+  end
+
+  def self.disk_filename(filename, directory=nil)
+    timestamp = DateTime.now.strftime("%y%m%d%H%M%S")
+    ascii = ''
+    if %r{^[a-zA-Z0-9_\.\-]*$}.match?(filename) && filename.length <= 50
+      ascii = filename
+    else
+      ascii = Digest::MD5.hexdigest(filename)
+      # keep the extension if any
+      ascii << $1 if filename =~ %r{(\.[a-zA-Z0-9]+)$}
+    end
+    while File.exist?(File.join(storage_path, directory.to_s,
+                                "#{timestamp}_#{ascii}"))
+      timestamp.succ!
+    end
+    "#{timestamp}_#{ascii}"
   end
   
 end

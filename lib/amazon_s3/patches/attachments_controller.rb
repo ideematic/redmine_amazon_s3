@@ -25,8 +25,10 @@ AttachmentsController.class_eval do
     elsif @attachment.is_text? && @attachment.filesize <= Setting.file_max_size_displayed.to_i.kilobyte
       @content = AmazonS3::Connection.get(@attachment.disk_filename_s3)
       render :action => 'file'
+    elsif @attachment.is_image?
+      render :action => 'image'
     else
-      download
+      render :action => 'other'
     end
   end
 
