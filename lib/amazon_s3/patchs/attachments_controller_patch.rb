@@ -39,7 +39,13 @@ module AmazonS3
                         if @attachment.container.is_a?(Version) || @attachment.container.is_a?(Project)
                           @attachment.increment_download
                         end
-                        redirect_to(AmazonS3::Connection.object_url(@attachment.disk_filename_s3))
+
+                        if stale?(:etag => @attachment.digest, :template => false)
+                          # images are sent inline
+                          send_data AmazonS3::Connection.get(@attachment.disk_filename_s3), :filename => filename_for_content_disposition(@attachment.filename),
+                                                          :type => detect_content_type(@attachment),
+                                                          :disposition => disposition(@attachment)
+                        end
                     end
     
                     def find_editable_attachments
