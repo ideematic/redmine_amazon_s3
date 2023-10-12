@@ -1,3 +1,0 @@
-= amazon_s3
-
-Description goes here

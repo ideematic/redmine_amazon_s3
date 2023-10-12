@@ -1,7 +1,7 @@
-development:
+production:
 
   # AWS access key (required)
-  access_key_id: 
+  access_key_id:
 
   # AWS secret key (required)
   secret_access_key:
@@ -17,7 +17,10 @@ development:
   # attachments_folder:
 
   # Folder where attachment thumbnails are stored
-  thumbnails_folder: thumbnails/
+  # thumbnails_folder: thumbnails/
 
-  # Whether objects are private, needing presigned URLs (default false)
-  private: true
+development:
+  # Copy configuration from `production` if desired
+
+test:
+  # Copy configuration from `production` if desired
