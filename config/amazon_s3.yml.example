@@ -1,0 +1,49 @@
+# Copy to <redmine>/config/amazon_s3.yml and restart Redmine.
+#
+# One section per Rails environment. An environment without a section (or
+# with "enabled: false") keeps Redmine's default local disk storage.
+# The file is evaluated with ERB, and every option can also be set with an
+# environment variable named REDMINE_S3_<OPTION>, e.g. REDMINE_S3_BUCKET.
+
+production:
+  # Bucket name (required)
+  bucket: my-redmine-attachments
+
+  # Region of the bucket (required unless "endpoint" is set)
+  region: eu-west-3
+
+  # Credentials. Leave both empty to use the AWS default credential chain:
+  # AWS_ACCESS_KEY_ID/AWS_SECRET_ACCESS_KEY environment variables, shared
+  # credentials files (AWS_PROFILE), IAM roles for EC2, ECS or EKS...
+  access_key_id: <%= ENV['AWS_ACCESS_KEY_ID'] %>
+  secret_access_key: <%= ENV['AWS_SECRET_ACCESS_KEY'] %>
+  # session_token:
+
+  # Folder inside the bucket where attachments are stored (default: bucket root)
+  # prefix: attachments
+
+  # Server-side encryption: AES256 or aws:kms
+  # sse: AES256
+  # sse_kms_key_id: arn:aws:kms:eu-west-3:123456789012:key/...
+
+  # Files larger than this (bytes) are uploaded in parts. Default: 100 MB
+  # multipart_threshold: 104857600
+
+  # Refuse to overwrite an existing object (If-None-Match: *). Supported by
+  # AWS S3; disable for S3-compatible servers that reject the header.
+  # conditional_writes: false
+
+# S3-compatible server (MinIO, SeaweedFS, Garage, Ceph, Scaleway, OVH, Wasabi,
+# Cloudflare R2...):
+#
+# production:
+#   endpoint: https://s3.fr-par.scw.cloud
+#   region: fr-par
+#   force_path_style: true
+#   bucket: my-redmine-attachments
+#   access_key_id: ...
+#   secret_access_key: ...
+#   # Send and verify checksums only when the operation requires it
+#   # (default). Use when_supported with AWS S3 to always use checksums.
+#   request_checksum_calculation: when_required
+#   response_checksum_validation: when_required

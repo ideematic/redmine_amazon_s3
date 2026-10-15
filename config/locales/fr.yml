@@ -1,0 +1,3 @@
+fr:
+  error_redmine_amazon_s3_upload_failed: "Le fichier n'a pas pu être enregistré. Veuillez réessayer plus tard."
+  error_redmine_amazon_s3_download_failed: "Le fichier n'a pas pu être lu depuis le stockage. Veuillez réessayer plus tard."
