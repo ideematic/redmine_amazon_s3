@@ -17,6 +17,7 @@ module AmazonS3
               :secret_access_key  => nil,
               :bucket             => nil,
               :region             => nil,
+              :endpoint           => nil,
               :attachments_folder => nil,
               :thumbnails_folder  => nil,
               :private            => false,
@@ -61,6 +62,18 @@ module AmazonS3
       
           def region
             @config[:region]
+          end
+
+          # Custom S3-compatible endpoint (e.g. MinIO, Scaleway, OVH).
+          # The AWS_ENDPOINT environment variable takes precedence over the YAML value.
+          def endpoint
+            ENV['AWS_ENDPOINT'].presence || @config[:endpoint].presence
+          end
+
+          # Custom endpoints generally don't support virtual-hosted-style
+          # bucket addressing, so path style is enforced whenever one is set.
+          def force_path_style?
+            endpoint.present?
           end
       
           def private?

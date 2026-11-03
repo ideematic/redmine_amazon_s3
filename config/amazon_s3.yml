@@ -12,6 +12,11 @@ development:
   # Identifier for the region in which the bucket was created (required)
   region:
 
+  # Custom S3-compatible endpoint URL (optional, e.g. https://s3.fr-par.scw.cloud).
+  # Overridden by the AWS_ENDPOINT environment variable. When an endpoint is set,
+  # force_path_style is enforced.
+  # endpoint:
+
   # Folder name inside bucket where uploaded files should be stored (e.g. 'attachments')
   # The default behavior is to store data in the bucket's root directory
   # attachments_folder:

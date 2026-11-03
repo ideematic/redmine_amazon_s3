@@ -12,6 +12,11 @@ module AmazonS3
                   :secret_access_key => @@config.secret_access_key,
                   :region => @@config.region
                 }
+
+                if @@config.endpoint
+                  options[:endpoint] = @@config.endpoint
+                  options[:force_path_style] = @@config.force_path_style?
+                end
         
                 @client = Aws::S3::Client.new(options)
               end
