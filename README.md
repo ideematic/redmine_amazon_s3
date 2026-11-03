@@ -50,6 +50,9 @@ Rails environment.
   `REDMINE_S3_<OPTION>`, for example `REDMINE_S3_BUCKET` or
   `REDMINE_S3_PREFIX`. Environment variables do not activate the plugin on
   their own: the environment still needs a non-empty section in the file.
+- `AWS_ENDPOINT`, when set and not empty, overrides `endpoint` and forces
+  `force_path_style` to `true`. `REDMINE_S3_ENDPOINT` takes precedence over
+  it.
 
 ### Amazon S3
 

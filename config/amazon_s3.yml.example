@@ -34,7 +34,8 @@ production:
   # conditional_writes: false
 
 # S3-compatible server (MinIO, SeaweedFS, Garage, Ceph, Scaleway, OVH, Wasabi,
-# Cloudflare R2...):
+# Cloudflare R2...). The AWS_ENDPOINT environment variable can also be used: it
+# overrides "endpoint" and forces "force_path_style" to true.
 #
 # production:
 #   endpoint: https://s3.fr-par.scw.cloud

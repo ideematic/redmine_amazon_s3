@@ -6,7 +6,8 @@ require 'yaml'
 module RedmineAmazonS3
   # Settings read from config/amazon_s3.yml (ERB, one section per Rails
   # environment). Every option can be overridden by an environment variable
-  # named REDMINE_S3_<OPTION>, e.g. REDMINE_S3_BUCKET.
+  # named REDMINE_S3_<OPTION>, e.g. REDMINE_S3_BUCKET. AWS_ENDPOINT sets the
+  # endpoint and forces path-style URLs.
   class Configuration
     DEFAULTS = {
       enabled: true,
@@ -138,11 +139,19 @@ module RedmineAmazonS3
       end
     end
 
+    # AWS_ENDPOINT overrides the endpoint of the file and always enables
+    # force_path_style. REDMINE_S3_ENDPOINT, more specific, takes precedence
+    # over AWS_ENDPOINT.
     def env_overrides(environment)
-      DEFAULTS.each_key.with_object({}) do |key, overrides|
+      overrides = {}
+      aws_endpoint = environment['AWS_ENDPOINT'].to_s.strip
+      overrides[:endpoint] = aws_endpoint unless aws_endpoint.empty?
+      DEFAULTS.each_key do |key|
         name = "REDMINE_S3_#{key.to_s.upcase}"
         overrides[key] = environment[name] if environment.key?(name)
       end
+      overrides[:force_path_style] = true unless aws_endpoint.empty?
+      overrides
     end
 
     def cast(key, value)

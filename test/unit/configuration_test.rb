@@ -97,6 +97,40 @@ class RedmineAmazonS3::ConfigurationTest < ActiveSupport::TestCase
     assert_not config.active?
   end
 
+  def test_aws_endpoint_should_override_endpoint_and_force_path_style
+    config = Configuration.new(
+      {bucket: 'b', region: 'r', endpoint: 'https://from-file', force_path_style: false},
+      environment: {'AWS_ENDPOINT' => 'http://minio:9000', 'REDMINE_S3_FORCE_PATH_STYLE' => 'false'}
+    )
+    assert_equal 'http://minio:9000', config.endpoint
+    assert_equal true, config.force_path_style
+    assert_equal 'http://minio:9000', config.client_options[:endpoint]
+    assert_equal true, config.client_options[:force_path_style]
+  end
+
+  def test_aws_endpoint_should_satisfy_region_requirement
+    config = Configuration.new({bucket: 'b'}, environment: {'AWS_ENDPOINT' => 'http://minio:9000'})
+    assert config.active?
+  end
+
+  def test_blank_aws_endpoint_should_be_ignored
+    config = Configuration.new(
+      {bucket: 'b', region: 'r', endpoint: 'https://from-file'},
+      environment: {'AWS_ENDPOINT' => '  '}
+    )
+    assert_equal 'https://from-file', config.endpoint
+    assert_equal false, config.force_path_style
+  end
+
+  def test_redmine_s3_endpoint_should_take_precedence_over_aws_endpoint
+    config = Configuration.new(
+      {bucket: 'b', region: 'r'},
+      environment: {'AWS_ENDPOINT' => 'http://aws-endpoint', 'REDMINE_S3_ENDPOINT' => 'http://plugin-endpoint'}
+    )
+    assert_equal 'http://plugin-endpoint', config.endpoint
+    assert_equal true, config.force_path_style
+  end
+
   def test_key_prefix
     assert_equal '', Configuration.new({bucket: 'b', region: 'r'}).key_prefix
     assert_equal 'a/b/', Configuration.new({bucket: 'b', region: 'r', prefix: '/a/b'}).key_prefix
